@@ -35,7 +35,7 @@ jobs:
           curl -fsS http://127.0.0.1:8795/api/board > /dev/null
           ./scripts/uninstall.sh
           sleep 3
-          python3 -c "import socket; s = socket.socket(); s.bind(('127.0.0.1', 8795)); print('port free')"
+          python3 -c "import socket; socket.create_connection(('127.0.0.1', 8795), timeout=1)" && exit 1 || echo "board stopped"
 
   install-linux:
     runs-on: ubuntu-latest
@@ -56,7 +56,7 @@ jobs:
           curl -fsS http://127.0.0.1:8795/api/board > /dev/null
           ./scripts/uninstall.sh
           sleep 3
-          python3 -c "import socket; s = socket.socket(); s.bind(('127.0.0.1', 8795)); print('port free')"
+          python3 -c "import socket; socket.create_connection(('127.0.0.1', 8795), timeout=1)" && exit 1 || echo "board stopped"
       - name: no-systemd path - install, check, uninstall
         run: |
           AGENTS_ROOM_NO_SYSTEMD=1 ./scripts/install.sh | tee out.txt
@@ -65,7 +65,7 @@ jobs:
           curl -fsS http://127.0.0.1:8795/api/board > /dev/null
           ./scripts/uninstall.sh
           sleep 3
-          python3 -c "import socket; s = socket.socket(); s.bind(('127.0.0.1', 8795)); print('port free')"
+          python3 -c "import socket; socket.create_connection(('127.0.0.1', 8795), timeout=1)" && exit 1 || echo "board stopped"
 
   install-windows:
     runs-on: windows-latest
@@ -84,5 +84,7 @@ jobs:
           if (-not (Test-Path (Join-Path ([Environment]::GetFolderPath("Startup")) "Agents Room Board.lnk"))) { exit 1 }
           powershell -ExecutionPolicy Bypass -File scripts\uninstall.ps1
           Start-Sleep -Seconds 3
-          python -c "import socket; s = socket.socket(); s.bind(('127.0.0.1', 8795)); print('port free')"
-          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python -c "import socket; socket.create_connection(('127.0.0.1', 8795), timeout=1)"
+          if ($LASTEXITCODE -eq 0) { Write-Output "board still answers"; exit 1 }
+          Write-Output "board stopped"
+          exit 0

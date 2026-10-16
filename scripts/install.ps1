@@ -43,7 +43,7 @@ Stop-Board
 Start-Sleep -Seconds 1
 
 # another program on the port would answer the check below and hide a failed start
-& $Python -c "import socket, sys`ns = socket.socket()`ntry:`n    s.bind(('127.0.0.1', $Port))`nexcept OSError:`n    sys.exit(0)`nsys.exit(1)"
+& $Python -c "import socket, sys`ntry:`n    socket.create_connection(('127.0.0.1', $Port), timeout=1).close()`nexcept OSError:`n    sys.exit(1)`nsys.exit(0)"
 if ($LASTEXITCODE -eq 0) { throw "Port $Port is already used by another program. Stop it, then run this script again." }
 
 New-Item -ItemType Directory -Force -Path $Logs | Out-Null

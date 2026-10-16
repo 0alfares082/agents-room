@@ -5,17 +5,19 @@
 شاشة حية تعرض كل قعدة Claude Code شغالة على جهازك كشخصية صغيرة: منو شغال الحين، منو ينطر ردك، ومنو خلص دوره. تتحدث بروحها كل ثانيتين.
 
 - **لوحة بالمتصفح** فيها الغرفة والشخصيات، وتحتها كروت لكل وكيل: شنو يسوي الحين، شنو خلص، وكم فحص نجح.
-- **وضع العرض** للتصوير والعروض: يبدل اسماء عملائك باسماء ثانية ويخفي الكلام الخاص، والحركة تبقى حقيقية.
-- **لوحة جانبية داخل تطبيق Claude** (اختياري): نفس الغرفة جنب المحادثة، تضغط على اي شخصية وتفتح قعدتها.
+- **وضع العرض** للتصوير والعروض: يخفي الكلام الخاص والعناوين، والحركة تبقى حقيقية.
+- **لوحة جانبية داخل تطبيق Claude** (تجريبي، ماك بس): نفس الغرفة جنب المحادثة.
 - **كل شي على جهازك**: السيرفر يسمع على `127.0.0.1` بس، وما يرسل شي برا.
 
 ## اللي تحتاجه
 
-- جهاز Mac
+- ماك او ويندوز او لينكس
 - Python 3.9 او اليديد
 - Claude Code (التطبيق او الطرفية)
 
 ## التركيب
+
+نزل الريبو:
 
 </div>
 
@@ -23,8 +25,24 @@
 git clone https://github.com/0alfares082/agents-room.git
 ```
 
+<div dir="rtl">
+
+**ماك او لينكس:**
+
+</div>
+
 ```bash
 cd agents-room && ./scripts/install.sh
+```
+
+<div dir="rtl">
+
+**ويندوز** (افتح PowerShell بمجلد الريبو):
+
+</div>
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\install.ps1
 ```
 
 <div dir="rtl">
@@ -39,7 +57,7 @@ http://127.0.0.1:8795/
 
 <div dir="rtl">
 
-السيرفر يشتغل بروحه كل ما تشغل الجهاز.
+السيرفر يرجع يشتغل بروحه كل ما تشغل الجهاز: بالماك عن طريق LaunchAgent، وبلينكس عن طريق خدمة systemd للمستخدم (او التشغيل التلقائي مع سطح المكتب اذا ما في systemd)، وبويندوز عن طريق اختصار بمجلد Startup.
 
 ## وضع العرض
 
@@ -79,17 +97,9 @@ cp board/config.example.json board/config.json
 | `projectsDir` | مكان محادثات Claude Code. الافتراضي `~/.claude/projects`. |
 | `ledgerDir` | اختياري: مجلد فيه ملفات `ledger.json` عشان يطلع شريط الفحوص. |
 
-بعد ما تعدل الاعدادات، اعد تشغيل السيرفر:
+بعد ما تعدل الاعدادات، شغل سكربت التركيب مرة ثانية عشان يعيد تشغيل السيرفر.
 
-</div>
-
-```bash
-./scripts/install.sh
-```
-
-<div dir="rtl">
-
-## اللوحة الجانبية داخل تطبيق Claude (تجريبي)
+## اللوحة الجانبية داخل تطبيق Claude (تجريبي، ماك بس)
 
 </div>
 
@@ -103,6 +113,8 @@ cp board/config.example.json board/config.json
 
 ## الازالة
 
+**ماك او لينكس:**
+
 </div>
 
 ```bash
@@ -111,7 +123,19 @@ cp board/config.example.json board/config.json
 
 <div dir="rtl">
 
+**ويندوز:**
+
+</div>
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\uninstall.ps1
+```
+
+<div dir="rtl">
+
 ## الاختبارات
+
+كل تعديل ينجرب تلقائيا بـ GitHub Actions على ماك وويندوز ولينكس، مع Python 3.9 و 3.12، ويجرب سكربت التركيب والازالة لكل نظام. وتقدر تشغلها عندك:
 
 </div>
 
@@ -135,9 +159,10 @@ python3 board/tests/smoke.py
 
 ## English
 
-A live room that shows every Claude Code session on your Mac as a little character: who is working, who is waiting on you, who just finished. Local only (binds `127.0.0.1`).
+A live room that shows every Claude Code session on your computer as a little character: who is working, who is waiting on you, who just finished. Local only (binds `127.0.0.1`). Runs on macOS, Windows and Linux with Python 3.9+.
 
-- Install: `./scripts/install.sh`, then open `http://127.0.0.1:8795/`.
+- Install on macOS or Linux: `./scripts/install.sh`. On Windows: `powershell -ExecutionPolicy Bypass -File scripts\install.ps1`. Then open `http://127.0.0.1:8795/`. It starts again at login (LaunchAgent, systemd user service or desktop autostart, Startup shortcut).
 - Show mode for recordings: `http://127.0.0.1:8795/?show=1` hides session titles by default and drops every private line server-side. Set `"showTitles": true` in `board/config.json` to keep titles, with the names in `showAliases` and each project's `showAs` swapped in.
-- In-app pane (experimental, needs Claude Code mods): `./scripts/install.sh --mod`, restart Claude, type `/agents-room`.
-- Remove: `./scripts/uninstall.sh`. Tests: `python3 -m pytest -q board/tests` and `python3 board/tests/smoke.py`.
+- In-app pane (experimental, macOS only, needs Claude Code mods): `./scripts/install.sh --mod`, restart Claude, type `/agents-room`.
+- Remove: `./scripts/uninstall.sh`, or `scripts\uninstall.ps1` on Windows.
+- Tests run on every push in GitHub Actions on all three OSes with Python 3.9 and 3.12, including each installer. Locally: `python3 -m pytest -q board/tests` and `python3 board/tests/smoke.py`.

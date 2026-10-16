@@ -23,14 +23,14 @@ if sys.version_info < (3, 9):
 PYCHECK
 
 port_busy() {
+  # busy = something answers on the port (a bind test would also fail on old closed connections)
   "$PY" - "$PORT" <<'PYPORT'
 import socket, sys
-s = socket.socket()
 try:
-    s.bind(("127.0.0.1", int(sys.argv[1])))
+    socket.create_connection(("127.0.0.1", int(sys.argv[1])), timeout=1).close()
 except OSError:
-    sys.exit(0)  # busy
-sys.exit(1)
+    sys.exit(1)
+sys.exit(0)
 PYPORT
 }
 
