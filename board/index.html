@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <title>غرفة الوكلاء</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Tajawal:wght@500;700;800&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="top-start">
+      <h1>غرفة الوكلاء</h1>
+      <p class="live" id="live" role="status" aria-live="polite">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span id="live-text">يتصل…</span>
+      </p>
+    </div>
+    <div class="top-end">
+      <ul class="counts" id="counts" aria-label="العدد">
+        <li class="count count-waiting"><span class="dot" aria-hidden="true"></span><b id="c-waiting">0</b> ينطرونك</li>
+        <li class="count count-working"><span class="dot" aria-hidden="true"></span><b id="c-working">0</b> شغالين</li>
+        <li class="count count-rest"><span class="dot" aria-hidden="true"></span><b id="c-rest">0</b> خلصوا او هادين</li>
+      </ul>
+      <time class="clock" id="clock" dir="ltr">--:--</time>
+    </div>
+  </header>
+
+  <p class="stale" id="stale" hidden>الاتصال واقف. اللي تشوفه قديم، اخر تحديث <span id="stale-age"></span>.</p>
+
+  <main>
+    <section class="room" aria-label="الغرفة: كل وكيل شخصية، اضغط عليها تفتح قعدته">
+      <div class="room-stage" id="room"></div>
+    </section>
+
+    <section class="zone zone-waiting" id="zone-waiting" aria-labelledby="h-waiting" hidden>
+      <h2 id="h-waiting">ينطرونك</h2>
+      <div class="waiting-list" id="list-waiting"></div>
+    </section>
+
+    <section class="zone zone-working" aria-labelledby="h-working">
+      <h2 id="h-working">شغالين الحين</h2>
+      <div class="working-grid" id="list-working"></div>
+      <p class="empty" id="empty-working" hidden>ما في وكيل شغال الحين.</p>
+    </section>
+
+    <section class="zone zone-rest" aria-labelledby="h-rest">
+      <h2 id="h-rest">خلصوا وهادين</h2>
+      <ol class="rest-list" id="list-rest"></ol>
+      <p class="empty" id="empty-rest" hidden>ما في شي هني للحين.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

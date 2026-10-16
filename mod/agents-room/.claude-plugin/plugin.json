@@ -1,0 +1,6 @@
+{
+  "name": "agents-room",
+  "version": "0.1.0",
+  "description": "A live pane with one character per Claude session: who works, who waits on you, who finished; press one to open its session",
+  "types": "./types/index.d.ts"
+}

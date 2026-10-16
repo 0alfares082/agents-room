@@ -1,0 +1,11 @@
+{
+  "projects": [
+    {"name": "Acme", "keywords": ["acme"], "color": "#5cc8f5", "showAs": "Nova"},
+    {"name": "Content", "keywords": ["reel", "youtube", "script"], "color": "#ff7ad9"},
+    {"name": "Community", "keywords": ["skool", "community"], "color": "#7aa7ff"}
+  ],
+  "showAliases": {
+    "Acme": "Nova",
+    "John": "Sam"
+  }
+}
