@@ -12,11 +12,13 @@ path = Path.home() / ".claude" / "settings.json"
 if path.exists():
     data = json.loads(path.read_text())
     env = data.get("env", {})
-    dirs = [d for d in env.get("CLAUDE_CODE_PLUGIN_DIRS", "").split(":") if d and d != sys.argv[1]]
-    if dirs:
-        env["CLAUDE_CODE_PLUGIN_DIRS"] = ":".join(dirs)
-    else:
-        env.pop("CLAUDE_CODE_PLUGIN_DIRS", None)
-    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+    before = [d for d in env.get("CLAUDE_CODE_PLUGIN_DIRS", "").split(":") if d]
+    dirs = [d for d in before if d != sys.argv[1]]
+    if dirs != before:  # leave the file untouched when the mod was never added
+        if dirs:
+            env["CLAUDE_CODE_PLUGIN_DIRS"] = ":".join(dirs)
+        else:
+            env.pop("CLAUDE_CODE_PLUGIN_DIRS", None)
+        path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
 PYMOD
 echo "Agents room removed."
