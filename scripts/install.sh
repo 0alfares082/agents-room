@@ -49,6 +49,15 @@ cat > "$PLIST" <<PLISTEOF
 PLISTEOF
 
 launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
+sleep 1
+# another program on the port would answer the check below and hide a failed start
+if lsof -nP -iTCP:8795 -sTCP:LISTEN >/dev/null 2>&1; then
+  echo "Port 8795 is already used by another program:" >&2
+  lsof -nP -iTCP:8795 -sTCP:LISTEN >&2 || true
+  echo "Stop it, then run this script again." >&2
+  rm -f "$PLIST"
+  exit 1
+fi
 launchctl bootstrap "gui/$(id -u)" "$PLIST"
 
 for _ in 1 2 3 4 5 6 7 8 9 10; do

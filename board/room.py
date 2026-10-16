@@ -66,7 +66,8 @@ def bot(a: dict, x: float, y: float, s: float) -> str:
     p = phase(a["id"])
     quiet = st == "quiet"
     bob_amp, bob_dur = (2, 6) if quiet else ((4, 2.4) if st == "working" else (6, 3.4))
-    out = [f'<g transform="translate({x:.1f} {y:.1f}) scale({s:.3f})"{" opacity=\"0.62\"" if quiet else ""}>']
+    fade = ' opacity="0.62"' if quiet else ""  # outside the f-string: Python 3.9 forbids backslashes there
+    out = [f'<g transform="translate({x:.1f} {y:.1f}) scale({s:.3f})"{fade}>']
     out.append('<ellipse cx="0" cy="0" rx="48" ry="11" fill="#000" opacity="0.5" filter="url(#soft)"/>')
     ring_anim = ""
     if st in ("working", "waiting"):
@@ -156,7 +157,8 @@ def sprite_bot(a: dict, x: float, y: float, s: float, ref: str, w: int, h: int, 
     out = []
     if link:
         out.append(f'<a href="{escape(link)}" target="_top">')
-    out.append(f'<g transform="translate({x:.1f} {y:.1f})"{" opacity=\"0.6\"" if quiet else ""}>')
+    fade = ' opacity="0.6"' if quiet else ""
+    out.append(f'<g transform="translate({x:.1f} {y:.1f})"{fade}>')
     out.append(f'<ellipse cx="0" cy="0" rx="{width * 0.42:.1f}" ry="{9 * s + 4:.1f}" fill="#000" opacity="0.5" filter="url(#soft)"/>')
     ring_anim = f'<animate attributeName="opacity" values="0.2;0.9;0.2" dur="{1.1 if st == "waiting" else 2.2}s" begin="-{p:.2f}s" repeatCount="indefinite"/>' if st in ("working", "waiting") else ""
     out.append(f'<ellipse cx="0" cy="0" rx="{width * 0.4:.1f}" ry="{8 * s + 4:.1f}" fill="none" stroke="{color}" stroke-width="2.5" opacity="0.7">{ring_anim}</ellipse>')
