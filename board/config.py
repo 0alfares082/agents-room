@@ -3,7 +3,8 @@
 Copy config.example.json to config.json and edit it. Every key is optional:
 
     projects     tag sessions by keywords: [{"name", "keywords", "color", "showAs"}]
-    showAliases  words swapped in titles in show mode (?show=1): {"Real name": "Stand-in"}
+    showTitles   show mode keeps session titles (default false: "Project · مهمة 1" instead)
+    showAliases  words swapped in those titles in show mode (?show=1): {"Real name": "Stand-in"}
     projectsDir  where Claude Code keeps transcripts (default ~/.claude/projects)
     ledgerDir    folder of <task>/ledger.json files to show check progress (default: none)
 
@@ -40,6 +41,7 @@ def load(path: Path | None = None) -> dict:
     expand = lambda v: Path(os.path.expanduser(v)) if v else None  # noqa: E731
     return {
         "projects": projects,
+        "showTitles": data.get("showTitles") is True,
         "showAliases": {str(k): str(v) for k, v in (data.get("showAliases") or {}).items() if str(k).strip()},
         "projectsDir": expand(data.get("projectsDir")) or Path.home() / ".claude" / "projects",
         "ledgerDir": expand(data.get("ledgerDir")),

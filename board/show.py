@@ -1,7 +1,8 @@
 """Show mode (?show=1): the same room for a screen recording or a demo, with private words taken out.
 
-Titles stay, with the names in config.json swapped for stand-ins (showAliases, and each
-project's showAs). Everything else that carries free text (your asks, Claude's last words,
+Titles are replaced by "Project · مهمة 1" unless config.json says "showTitles": true; then
+they stay, with the names in config.json swapped for stand-ins (showAliases, each project's
+showAs). Everything else that carries free text (your asks, Claude's last words,
 tool descriptions, ledger goals, PR numbers, session links) is dropped; statuses, timings,
 counts, generic tool kinds and check progress stay. The output is built field by field from an
 allowlist, so a field added to the board later never reaches show mode by accident.
@@ -50,7 +51,7 @@ def alias(text: str) -> str:
 
 
 def safe_title(a: dict, label: str, n: int, leak: re.Pattern | None) -> str:
-    if a.get("titled"):
+    if config.CONFIG["showTitles"] and a.get("titled"):
         t = alias(a.get("title", ""))
         if t.strip() and not (leak and leak.search(t)):
             return t

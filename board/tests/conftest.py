@@ -13,6 +13,7 @@ TEST_CONFIG = {
         {"name": "Globex", "keywords": ["globex"], "color": "#b69cff", "showAs": "Atlas"},
         {"name": "Content", "keywords": ["reel"], "color": "#ff7ad9", "showAs": "Content"},
     ],
+    "showTitles": True,
     "showAliases": {"John": "Sam"},
     "projectsDir": Path("/nonexistent"),
     "ledgerDir": None,

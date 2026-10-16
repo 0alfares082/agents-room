@@ -4,6 +4,7 @@
     {"name": "Content", "keywords": ["reel", "youtube", "script"], "color": "#ff7ad9"},
     {"name": "Community", "keywords": ["skool", "community"], "color": "#7aa7ff"}
   ],
+  "showTitles": true,
   "showAliases": {
     "Acme": "Nova",
     "John": "Sam"

@@ -55,7 +55,7 @@ http://127.0.0.1:8795/?show=1
 
 بهالوضع:
 
-- العناوين تبقى، بس كل اسم حاطه بالاعدادات ينبدل بالاسم البديل.
+- العناوين تنخفي وتطلع بدالها «المشروع · مهمة 1». اذا تبي العناوين تبين، حط `"showTitles": true` بالاعدادات، وكل اسم حاطه بـ `showAliases` ينبدل بالاسم البديل.
 - كلامك وكلام Claude ووصف الاوامر ينشال. يبقى بس نوع الشغل مثل «يشغل امر» او «يعدل ملف».
 - الحذف يصير بالسيرفر نفسه، يعني الكلام الخاص ما يوصل الصفحة اصلا.
 
@@ -74,6 +74,7 @@ cp board/config.example.json board/config.json
 | المفتاح | شنو يسوي |
 |---|---|
 | `projects` | يصنف القعدات حسب كلمات بالعنوان او الطلب. لكل مشروع اسم وكلمات ولون، و`showAs` هو الاسم اللي يطلع بوضع العرض. |
+| `showTitles` | `true` يخلي عناوين القعدات تبين بوضع العرض. الافتراضي `false`: العناوين تنخفي. |
 | `showAliases` | كلمات تنبدل بالعناوين بوضع العرض، مثل اسم عميل او اسم شخص. |
 | `projectsDir` | مكان محادثات Claude Code. الافتراضي `~/.claude/projects`. |
 | `ledgerDir` | اختياري: مجلد فيه ملفات `ledger.json` عشان يطلع شريط الفحوص. |
@@ -137,6 +138,6 @@ python3 board/tests/smoke.py
 A live room that shows every Claude Code session on your Mac as a little character: who is working, who is waiting on you, who just finished. Local only (binds `127.0.0.1`).
 
 - Install: `./scripts/install.sh`, then open `http://127.0.0.1:8795/`.
-- Show mode for recordings: `http://127.0.0.1:8795/?show=1` swaps the names in `board/config.json` (`showAliases`, each project's `showAs`) and drops every private line server-side.
+- Show mode for recordings: `http://127.0.0.1:8795/?show=1` hides session titles by default and drops every private line server-side. Set `"showTitles": true` in `board/config.json` to keep titles, with the names in `showAliases` and each project's `showAs` swapped in.
 - In-app pane (experimental, needs Claude Code mods): `./scripts/install.sh --mod`, restart Claude, type `/agents-room`.
 - Remove: `./scripts/uninstall.sh`. Tests: `python3 -m pytest -q board/tests` and `python3 board/tests/smoke.py`.

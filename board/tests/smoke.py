@@ -30,7 +30,8 @@ def main() -> int:
         tmp = Path(tmp)
         fx.scene(tmp / "projects" / "-home-x-demo")
         cfg = tmp / "config.json"
-        cfg.write_text(json.dumps({"projects": [{"name": "Acme", "keywords": ["acme"], "showAs": "Nova"}]}))
+        cfg.write_text(json.dumps({"projects": [{"name": "Acme", "keywords": ["acme"], "showAs": "Nova"}],
+                                   "showTitles": True}))
         port = free_port()
         env = dict(os.environ, AGENTS_ROOM_CONFIG=str(cfg), PYTHONDONTWRITEBYTECODE="1")
         proc = subprocess.Popen([sys.executable, str(HERE.parent / "serve.py"), "--port", str(port),

@@ -56,6 +56,14 @@ def test_working_shows_generic_kind_and_waiting_a_plain_line(tmp_path, monkeypat
     assert a["done"]["latest"] == "" and a["done"]["action"] == ""
 
 
+def test_titles_hidden_unless_config_allows(tmp_path, monkeypatch):
+    import config
+    monkeypatch.setitem(config.CONFIG, "showTitles", False)
+    _, s = snaps(tmp_path, monkeypatch)
+    titles = sorted(a["title"] for a in s["agents"])
+    assert titles == ["Atlas · مهمة 1", "Nova · مهمة 1", "Nova · مهمة 2", "عام · مهمة 1"], titles
+
+
 def test_alias_whole_words_and_fallback():
     assert show.alias("Acme lead") == "Nova lead"
     assert show.alias("one updated message to John (draft)") == "one updated message to Sam (draft)"
