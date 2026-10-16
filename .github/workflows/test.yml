@@ -1,0 +1,88 @@
+name: test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        python: ["3.9", "3.12"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install pytest
+      - run: python -m pytest -q board/tests
+      - run: python board/tests/smoke.py
+
+  install-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: install, check, uninstall
+        run: |
+          ./scripts/install.sh
+          curl -fsS http://127.0.0.1:8795/api/board > /dev/null
+          ./scripts/uninstall.sh
+          sleep 3
+          python3 -c "import socket; s = socket.socket(); s.bind(('127.0.0.1', 8795)); print('port free')"
+
+  install-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: start a systemd user session
+        run: |
+          sudo loginctl enable-linger "$USER"
+          echo "XDG_RUNTIME_DIR=/run/user/$(id -u)" >> "$GITHUB_ENV"
+          for i in $(seq 1 30); do [ -S "/run/user/$(id -u)/bus" ] && break; sleep 1; done
+      - name: systemd path - install, check, uninstall
+        run: |
+          ./scripts/install.sh | tee out.txt
+          grep -q "systemd user service" out.txt
+          curl -fsS http://127.0.0.1:8795/api/board > /dev/null
+          ./scripts/uninstall.sh
+          sleep 3
+          python3 -c "import socket; s = socket.socket(); s.bind(('127.0.0.1', 8795)); print('port free')"
+      - name: no-systemd path - install, check, uninstall
+        run: |
+          AGENTS_ROOM_NO_SYSTEMD=1 ./scripts/install.sh | tee out.txt
+          grep -q "next desktop login" out.txt
+          test -f "$HOME/.config/autostart/agents-room.desktop"
+          curl -fsS http://127.0.0.1:8795/api/board > /dev/null
+          ./scripts/uninstall.sh
+          sleep 3
+          python3 -c "import socket; s = socket.socket(); s.bind(('127.0.0.1', 8795)); print('port free')"
+
+  install-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: install, check, uninstall (Windows PowerShell 5.1)
+        shell: powershell
+        run: |
+          powershell -ExecutionPolicy Bypass -File scripts\install.ps1
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          $r = Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8795/api/board
+          if ($r.StatusCode -ne 200) { exit 1 }
+          if (-not (Test-Path (Join-Path ([Environment]::GetFolderPath("Startup")) "Agents Room Board.lnk"))) { exit 1 }
+          powershell -ExecutionPolicy Bypass -File scripts\uninstall.ps1
+          Start-Sleep -Seconds 3
+          python -c "import socket; s = socket.socket(); s.bind(('127.0.0.1', 8795)); print('port free')"
+          if ($LASTEXITCODE -ne 0) { exit 1 }

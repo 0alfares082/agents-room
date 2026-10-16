@@ -6,6 +6,7 @@ check every endpoint answers. Touches nothing outside a temporary folder.
 """
 import json
 import os
+import shutil
 import socket
 import subprocess
 import sys
@@ -26,8 +27,8 @@ def free_port() -> int:
 
 
 def main() -> int:
-    with tempfile.TemporaryDirectory() as tmp:
-        tmp = Path(tmp)
+    tmp = Path(tempfile.mkdtemp())
+    try:
         fx.scene(tmp / "projects" / "-home-x-demo")
         cfg = tmp / "config.json"
         cfg.write_text(json.dumps({"projects": [{"name": "Acme", "keywords": ["acme"], "showAs": "Nova"}],
@@ -58,6 +59,8 @@ def main() -> int:
         finally:
             proc.terminate()
             proc.wait(5)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)  # Windows can hold a file a moment after the server stops
     print(f"PASS smoke: 4 sessions served on port {port}, show mode swaps the names")
     return 0
 

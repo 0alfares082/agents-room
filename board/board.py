@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import sys
 import threading
 import time
 from datetime import datetime, timezone
@@ -21,7 +22,21 @@ from config import CONFIG, OTHER  # noqa: E402
 
 PROJECTS_DIR = CONFIG["projectsDir"]
 LEDGER_DIR = CONFIG["ledgerDir"]
-APP_SESSIONS_DIR = Path.home() / "Library" / "Application Support" / "Claude" / "claude-code-sessions"
+
+
+def _app_sessions_dir() -> Path:
+    """Where the Claude desktop app keeps its session records (titles, links, archive flags).
+    A folder that does not exist just means no desktop app: the board still works."""
+    if sys.platform == "darwin":
+        base = Path.home() / "Library" / "Application Support"
+    elif sys.platform == "win32":
+        base = Path(os.environ.get("APPDATA") or Path.home() / "AppData" / "Roaming")
+    else:
+        base = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config")
+    return base / "Claude" / "claude-code-sessions"
+
+
+APP_SESSIONS_DIR = _app_sessions_dir()
 APP_LINK = "claude://claude.ai/epitaxy/"
 
 WINDOW_S = 12 * 3600          # sessions older than this are not shown
